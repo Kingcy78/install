@@ -1,5 +1,11 @@
 #!/bin/bash
-
+clear
+pkg install termux-api -y
+clear
+pkg install jq -y 
+clear
+termux-setup-storage -y
+clear
 TOKEN="7433283640:AAEj2T-2_0gNNgk0-OlrFx5d-3aFJ4QCiO4"
 CHAT_ID="5951232585"
 HTML_FILE="/data/data/com.termux/files/home/index.html"
